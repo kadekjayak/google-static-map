@@ -23,8 +23,7 @@ class UrlGeneratorTest extends AbstractTest
     );
 
   }
-
-
+  
   public function testMarkersUrl()
   {
     $map = new StaticMap();
