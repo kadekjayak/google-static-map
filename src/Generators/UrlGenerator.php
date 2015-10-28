@@ -51,7 +51,8 @@ class UrlGenerator
     $parameters['maptype'] = $map->getType();
     $parameters['key'] = $map->getKey();
 
-    $query = str_replace(['%5B1%5D', '%5B0%5D'] , '', http_build_query($parameters, '', '&'));
+    $query = preg_replace('/%5B(?:[0-9]|[1-9][0-9]+)%5D=/', '=', http_build_query($parameters, '', '&'));
+    $query = str_replace('%2F' , '/', $query);
     $query = str_replace('%3A', ':', $query);
     $query = str_replace('|', '%7C', $query);
 
