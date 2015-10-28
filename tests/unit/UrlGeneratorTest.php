@@ -38,7 +38,27 @@ class UrlGeneratorTest extends AbstractTest
     $urlGenerator = new UrlGenerator();
 
     $this->assertEquals(
-      UrlGenerator::GOOGLE_MAP_URL . '?markers=size:mid%7Clabel:%7C59.93863000%2C30.31413000&markers=size:mid%7Clabel:%7C59.93868000%2C30.31413000&markers%5B2%5D=size:mid%7Clabel:%7C60.93868000%2C30.31413000&center=60.27199667%2C30.31413000&zoom=16&size=600x300&maptype=satellite',
+      UrlGenerator::GOOGLE_MAP_URL . '?markers=size:mid%7Clabel:%7C59.93863000%2C30.31413000&markers=size:mid%7Clabel:%7C59.93868000%2C30.31413000&markers=size:mid%7Clabel:%7C60.93868000%2C30.31413000&center=60.27199667%2C30.31413000&zoom=16&size=600x300&maptype=satellite',
+      $urlGenerator->generate($map)
+    );
+
+  }
+
+  public function testMarkersCustomIconUrl()
+  {
+    $map = new StaticMap();
+    $map->setZoom(16);
+    $map->setType(StaticMap::T_SATELLITE);
+
+    $markerStyle = new MarkerStyle();
+    $markerStyle->setIcon('http://localhost/images/page/map_pin_icon.png');
+
+    $map->addMarker(new Marker(new Coordinate(59.9386300, 30.3141300), $markerStyle));
+
+    $urlGenerator = new UrlGenerator();
+
+    $this->assertEquals(
+      UrlGenerator::GOOGLE_MAP_URL . '?markers=size:mid%7Clabel:%7Cicon:http://localhost/images/page/map_pin_icon.png%7C59.93863000%2C30.31413000&center=59.93863000%2C30.31413000&zoom=16&size=600x300&maptype=satellite',
       $urlGenerator->generate($map)
     );
 
