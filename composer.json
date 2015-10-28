@@ -1,0 +1,22 @@
+{
+  "name": "vlobchuk/google-static-map",
+  "license": "Proprietary",
+  "authors": [
+    {
+      "name": "Vitaly Lobchuk",
+      "email": "vn.lobchuk@gmail.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4.8"
+  },
+  "autoload": {
+    "psr-4": {
+      "GoogleMapStatic\\": "src",
+      "GoogleMapStatic\\Tests\\Unit\\": "tests/phpunit"
+    }
+  }
+}
