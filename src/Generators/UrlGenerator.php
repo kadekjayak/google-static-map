@@ -2,6 +2,8 @@
 
 namespace GoogleMapStatic\Generators;
 
+use GoogleMapStatic\Elements\Marker\Marker;
+use GoogleMapStatic\Elements\Marker\MarkerGroup;
 use GoogleMapStatic\StaticMap;
 
 class UrlGenerator
@@ -13,28 +15,29 @@ class UrlGenerator
   public function generate(StaticMap $map)
   {
     $parameters = [];
-
     $parameters['markers'] = [];
 
     foreach ($map->getMarkers() as $marker) {
 
-      $parts = [];
+      if ($marker instanceof MarkerGroup) {
 
-      foreach (self::$STYLE_PROPERTIES as $styleProperty) {
+        $groupStyle = $this->buildMarkerStyleQuery($marker);
+        $groupLocations = [];
 
-        $getter = 'get' . ucfirst($styleProperty);
-
-        $style = $marker->getStyle();
-
-        if (($value = $style->{$getter}()) !== null) {
-          $parts[] = $styleProperty . ':' . $value;
+        foreach ($marker->getMarkers() as $groupMarker) {
+          $groupLocations[] = $this->buildMarkerLocationQuery($groupMarker);
         }
+
+        $parameters['markers'][] = $groupStyle . '|' . implode('|', $groupLocations);
+
+      } else {
+
+        $markerStyle = $this->buildMarkerStyleQuery($marker);
+        $markerLocation = $this->buildMarkerLocationQuery($marker);
+
+        $parameters['markers'][] = $markerStyle . '|' . $markerLocation;
       }
 
-
-      $parts[] = $marker->getLatitude() . ',' . $marker->getLongitude();
-
-      $parameters['markers'][] = implode('|', $parts);
     }
 
     if (($center = $map->getCenter()) !== null) {
@@ -61,5 +64,28 @@ class UrlGenerator
     $query = str_replace('|', '%7C', $query);
 
     return self::GOOGLE_MAP_URL . '?' . $query;
+  }
+
+  private function buildMarkerStyleQuery(Marker $marker)
+  {
+    $parts = [];
+
+    foreach (self::$STYLE_PROPERTIES as $styleProperty) {
+
+      $getter = 'get' . ucfirst($styleProperty);
+
+      $style = $marker->getStyle();
+
+      if (($value = $style->{$getter}()) !== null && !empty($value) && $value !== '') {
+        $parts[] = $styleProperty . ':' . $value;
+      }
+    }
+
+    return implode('|', $parts);
+  }
+
+  private function buildMarkerLocationQuery(Marker $marker)
+  {
+    return $marker->getLatitude() . ',' . $marker->getLongitude();
   }
 }
