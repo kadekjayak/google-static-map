@@ -3,6 +3,7 @@
 namespace GoogleMapStatic;
 
 use GoogleMapStatic\Elements\Marker\Marker;
+use GoogleMapStatic\Elements\Marker\MarkerGroup;
 use GoogleMapStatic\UnitMeasures\Coordinate;
 use GoogleMapStatic\UnitMeasures\MapSize;
 
@@ -28,21 +29,43 @@ class StaticMap
   private $language = 'en';
   private $key;
 
-  public function calculateCenter()
+  /**
+   * @param array $markers
+   * @return array
+   */
+  private function calculateLatLongAvgWithMarkers(array $markers)
   {
     $longitudeSum = 0;
     $latitudeSum = 0;
 
-    foreach ($this->getMarkers() as $marker) {
+    $markerCount = sizeof($markers);
+
+    foreach ($markers as $marker) {
+
+      if ($marker instanceof MarkerGroup) {
+
+        $latlngSum = $this->calculateLatLongAvgWithMarkers($marker->getMarkers());
+
+        $latitudeSum += $latlngSum[0];
+        $longitudeSum += $latlngSum[1];
+
+        continue;
+      }
+
       $latitudeSum += $marker->getLatitude();
       $longitudeSum += $marker->getLongitude();
+
     }
 
-    $markersCount = sizeof($this->getMarkers());
+    return [$latitudeSum / $markerCount, $longitudeSum / $markerCount];
+  }
 
-    $latitudeAvg = $latitudeSum / $markersCount;
-    $longitudeAvg = $longitudeSum / $markersCount;
-
+  /**
+   * @return Coordinate
+   */
+  public function calculateCenter()
+  {
+    list($latitudeAvg, $longitudeAvg) = $this->calculateLatLongAvgWithMarkers($this->getMarkers());
     return new Coordinate($latitudeAvg, $longitudeAvg);
   }
 
@@ -51,8 +74,8 @@ class StaticMap
    */
   public function getCenter()
   {
-    if(null === $this->center) {
-      if(($markers = $this->getMarkers())) {
+    if (null === $this->center) {
+      if (($markers = $this->getMarkers())) {
         $this->center = $this->calculateCenter();
       }
     }
@@ -93,7 +116,7 @@ class StaticMap
    */
   public function getSize()
   {
-    if(null === $this->size) {
+    if (null === $this->size) {
       $this->size = new MapSize(600, 300);
     }
     return $this->size;
@@ -167,7 +190,8 @@ class StaticMap
    * @param Marker $marker
    * @return $this
    */
-  public function addMarker(Marker $marker) {
+  public function addMarker(Marker $marker)
+  {
     $this->markers[] = $marker;
     return $this;
   }
