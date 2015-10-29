@@ -23,16 +23,20 @@ class UrlGeneratorTest extends AbstractTest
     );
 
   }
-  
+
   public function testMarkersUrl()
   {
     $map = new StaticMap();
-    $map->setZoom(16);
-    $map->setType(StaticMap::T_SATELLITE);
+    $map
+      ->setZoom(16)
+      ->setType(StaticMap::T_SATELLITE)
+    ;
 
-    $map->addMarker(new Marker(new Coordinate(59.9386300, 30.3141300), new MarkerStyle()));
-    $map->addMarker(new Marker(new Coordinate(59.9386800, 30.3141300), new MarkerStyle()));
-    $map->addMarker(new Marker(new Coordinate(60.9386800, 30.3141300), new MarkerStyle()));
+    $map
+      ->addMarker(new Marker(new Coordinate(59.9386300, 30.3141300), new MarkerStyle()))
+      ->addMarker(new Marker(new Coordinate(59.9386800, 30.3141300), new MarkerStyle()))
+      ->addMarker(new Marker(new Coordinate(60.9386800, 30.3141300), new MarkerStyle()))
+    ;
 
     $urlGenerator = new UrlGenerator();
 
@@ -46,8 +50,10 @@ class UrlGeneratorTest extends AbstractTest
   public function testMarkersCustomIconUrl()
   {
     $map = new StaticMap();
-    $map->setZoom(16);
-    $map->setType(StaticMap::T_SATELLITE);
+    $map
+      ->setZoom(16)
+      ->setType(StaticMap::T_SATELLITE)
+    ;
 
     $markerStyle = new MarkerStyle();
     $markerStyle->setIcon('http://localhost/images/page/map_pin_icon.png');
