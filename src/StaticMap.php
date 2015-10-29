@@ -21,12 +21,13 @@ class StaticMap
   private $center;
   private $zoom = 8;
   private $size;
+  private $scale;
   private $autoScale = false;
   private $type = self::T_ROADMAP;
   private $markers = [];
   private $language = 'en';
   private $key;
-  
+
   public function calculateCenter()
   {
     $longitudeSum = 0;
@@ -105,6 +106,24 @@ class StaticMap
   public function setSize(MapSize $size)
   {
     $this->size = $size;
+    return $this;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getScale()
+  {
+    return $this->scale;
+  }
+
+  /**
+   * @param mixed $scale
+   * @return $this
+   */
+  public function setScale($scale)
+  {
+    $this->scale = $scale;
     return $this;
   }
 
