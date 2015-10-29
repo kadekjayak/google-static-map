@@ -26,7 +26,7 @@ class StaticMap
   private $markers = [];
   private $language = 'en';
   private $key;
-
+  
   public function calculateCenter()
   {
     $longitudeSum = 0;
@@ -118,10 +118,12 @@ class StaticMap
 
   /**
    * @param boolean $autoScale
+   * @return $this
    */
   public function setAutoScale($autoScale)
   {
     $this->autoScale = $autoScale;
+    return $this;
   }
 
   /**
@@ -161,10 +163,12 @@ class StaticMap
 
   /**
    * @param mixed $type
+   * @return $this
    */
   public function setType($type)
   {
     $this->type = $type;
+    return $this;
   }
 
   /**
@@ -177,10 +181,12 @@ class StaticMap
 
   /**
    * @param string $language
+   * @return $this
    */
   public function setLanguage($language)
   {
     $this->language = $language;
+    return $this;
   }
 
   /**
@@ -193,10 +199,12 @@ class StaticMap
 
   /**
    * @param mixed $key
+   * @return $this
    */
   public function setKey($key)
   {
     $this->key = $key;
+    return $this;
   }
 
 }
