@@ -17,11 +17,12 @@ class UrlGeneratorTest extends AbstractTest
 
     $urlGenerator = new UrlGenerator();
 
-    $this->assertEquals(
-      UrlGenerator::GOOGLE_MAP_URL . '?zoom=16&size=600x300&maptype=roadmap',
-      $urlGenerator->generate($map)
-    );
+    $urlInfo = parse_url($urlGenerator->generate($map));
+    parse_str($urlInfo['query'], $queryParameters);
 
+    $this->assertEquals('16', $queryParameters['zoom']);
+    $this->assertEquals('600x300', $queryParameters['size']);
+    $this->assertEquals('roadmap', $queryParameters['maptype']);
   }
 
   public function testMarkersUrl()
@@ -32,19 +33,18 @@ class UrlGeneratorTest extends AbstractTest
       ->setType(StaticMap::T_SATELLITE)
     ;
 
-    $map
-      ->addMarker(new Marker(new Coordinate(59.9386300, 30.3141300), new MarkerStyle()))
-      ->addMarker(new Marker(new Coordinate(59.9386800, 30.3141300), new MarkerStyle()))
-      ->addMarker(new Marker(new Coordinate(60.9386800, 30.3141300), new MarkerStyle()))
-    ;
+    $map->addMarker(new Marker(new Coordinate(59.93863, 30.31413), new MarkerStyle()));
 
     $urlGenerator = new UrlGenerator();
 
-    $this->assertEquals(
-      UrlGenerator::GOOGLE_MAP_URL . '?markers=size:mid%7Clabel:%7C59.93863000%2C30.31413000&markers=size:mid%7Clabel:%7C59.93868000%2C30.31413000&markers=size:mid%7Clabel:%7C60.93868000%2C30.31413000&center=60.27199667%2C30.31413000&zoom=16&size=600x300&maptype=satellite',
-      $urlGenerator->generate($map)
-    );
+    $urlInfo = parse_url($urlGenerator->generate($map));
+    parse_str($urlInfo['query'], $queryParameters);
 
+    $this->assertEquals('size:mid|label:|59.93863000,30.31413000', $queryParameters['markers']);
+    $this->assertEquals('59.93863000,30.31413000', $queryParameters['center']);
+    $this->assertEquals('16', $queryParameters['zoom']);
+    $this->assertEquals('600x300', $queryParameters['size']);
+    $this->assertEquals('satellite', $queryParameters['maptype']);
   }
 
   public function testMarkersCustomIconUrl()
@@ -62,10 +62,35 @@ class UrlGeneratorTest extends AbstractTest
 
     $urlGenerator = new UrlGenerator();
 
-    $this->assertEquals(
-      UrlGenerator::GOOGLE_MAP_URL . '?markers=size:mid%7Clabel:%7Cicon:http://localhost/images/page/map_pin_icon.png%7C59.93863000%2C30.31413000&center=59.93863000%2C30.31413000&zoom=16&size=600x300&maptype=satellite',
-      $urlGenerator->generate($map)
-    );
+    $urlInfo = parse_url($urlGenerator->generate($map));
+    parse_str($urlInfo['query'], $queryParameters);
 
+    $this->assertEquals('size:mid|label:|icon:http://localhost/images/page/map_pin_icon.png|59.93863000,30.31413000', $queryParameters['markers']);
+    $this->assertEquals('59.93863000,30.31413000', $queryParameters['center']);
+    $this->assertEquals('16', $queryParameters['zoom']);
+    $this->assertEquals('600x300', $queryParameters['size']);
+    $this->assertEquals('satellite', $queryParameters['maptype']);
+  }
+
+  public function testScale()
+  {
+    $map = new StaticMap();
+    $map
+      ->setCenter(new Coordinate(59.93863, 30.31413))
+      ->setScale(2)
+    ;
+
+    $urlGenerator = new UrlGenerator();
+
+    $urlInfo = parse_url($urlGenerator->generate($map));
+    parse_str($urlInfo['query'], $queryParameters);
+
+    $this->assertEquals('http', $urlInfo['scheme']);
+    $this->assertEquals('maps.googleapis.com', $urlInfo['host']);
+    $this->assertEquals('59.93863000,30.31413000', $queryParameters['center']);
+    $this->assertEquals('8', $queryParameters['zoom']);
+    $this->assertEquals('2', $queryParameters['scale']);
+    $this->assertEquals('600x300', $queryParameters['size']);
+    $this->assertEquals('roadmap', $queryParameters['maptype']);
   }
 }
