@@ -58,11 +58,33 @@ class UrlGenerator
     $parameters['maptype'] = $map->getType();
     $parameters['key'] = $map->getKey();
 
-    $query = preg_replace('/%5B(?:[0-9]|[1-9][0-9]+)%5D=/', '=', http_build_query($parameters, '', '&'));
+    /* Parse Styles parameters */
+    foreach ( $map->getStyles() as $style ) {
+      if ( count($style->getStyles()) == 0 ) continue;
+
+      $scope = [
+        'feature' => $style->getFeature(),
+        'element' => $style->getElement()
+      ];
+
+      $queryString = http_build_query(array_merge( $scope, $style->getStyles() ), null, '|');
+
+      $queryString = str_replace('=', ':', $queryString);
+      $parameters['style'][] = $queryString;
+      
+    }
+
+
+    $query =  http_build_query($parameters, '', '&');
+
+
     $query = str_replace('%2F', '/', $query);
     $query = str_replace('%3A', ':', $query);
     $query = str_replace('%7C', '|', $query);
     $query = str_replace('%2C', ',', $query);
+
+    //Multiple Key Index fix for style
+    $query = preg_replace('/%5B(?:[0-9]|[1-9][0-9]+)%5D=/', '=', $query); 
 
     return self::GOOGLE_MAP_URL . '?' . $query;
   }

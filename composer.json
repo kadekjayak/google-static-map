@@ -1,10 +1,14 @@
 {
-  "name": "vlobchuk/google-static-map",
+  "name": "kadekjayak/google-static-map",
   "license": "Proprietary",
   "authors": [
     {
       "name": "Vitaly Lobchuk",
       "email": "vn.lobchuk@gmail.com"
+    },
+    {
+      "name": "kadekjayak",
+      "email": "kadekjayak@yahoo.co.id"
     }
   ],
   "minimum-stability": "stable",

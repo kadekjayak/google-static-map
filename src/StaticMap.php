@@ -28,6 +28,7 @@ class StaticMap
   private $markers = [];
   private $language = 'en';
   private $key;
+  private $styles = [];
 
   /**
    * @param array $markers
@@ -248,6 +249,25 @@ class StaticMap
   {
     $this->key = $key;
     return $this;
+  }
+
+
+  /**
+   * @param Style
+   * @return $this
+   */
+  public function addStyle($style)
+  {
+    $this->styles[] = $style;
+    return $this;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getStyles()
+  {
+    return $this->styles;
   }
 
 }
